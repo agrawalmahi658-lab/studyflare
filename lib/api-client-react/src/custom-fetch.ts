@@ -358,6 +358,16 @@ export async function customFetch<T = unknown>(
     }
   }
 
+  const userStr = typeof window !== "undefined" ? localStorage.getItem("studyflare_user") : null;
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      headers.set("x-user-id", user.id.toString());
+    } catch(e) {}
+  } else {
+    headers.set("x-user-id", "1");
+  }
+
   const requestInfo = { method, url: resolveUrl(input) };
 
   const response = await fetch(input, { ...init, method, headers });

@@ -3,13 +3,21 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: StudyFlare API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: users
+    description: User profile operations
+  - name: sessions
+    description: Study session operations
+  - name: groups
+    description: Group study operations
+  - name: matching
+    description: Matching operations
 paths:
   /healthz:
     get:
@@ -24,6 +32,279 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /users/login:
+    post:
+      operationId: loginUser
+      tags: [users]
+      summary: Login or register a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "400":
+          description: Invalid request
+
+  /users/profile:
+    get:
+      operationId: getProfile
+      tags: [users]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: Profile found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateProfile
+      tags: [users]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /matching/broadcast:
+    post:
+      operationId: broadcastAvailability
+      tags: [matching]
+      summary: Broadcast availability to nearby students
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BroadcastRequest"
+      responses:
+        "200":
+          description: Nearby study partners found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MatchResults"
+
+  /matching/nearby:
+    get:
+      operationId: getNearbyStudents
+      tags: [matching]
+      summary: Get nearby active study broadcasters
+      parameters:
+        - name: subject
+          in: query
+          schema:
+            type: string
+        - name: minMembers
+          in: query
+          schema:
+            type: integer
+        - name: maxMembers
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of nearby broadcasters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NearbyStudent"
+
+  /sessions:
+    get:
+      operationId: listSessions
+      tags: [sessions]
+      summary: Get study sessions for current user
+      responses:
+        "200":
+          description: List of sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudySession"
+    post:
+      operationId: createSession
+      tags: [sessions]
+      summary: Create a new study session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSessionRequest"
+      responses:
+        "201":
+          description: Session created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudySession"
+
+  /sessions/{id}:
+    get:
+      operationId: getSession
+      tags: [sessions]
+      summary: Get a single session by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Session found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudySession"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateSession
+      tags: [sessions]
+      summary: Update session (end it, etc.)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSessionRequest"
+      responses:
+        "200":
+          description: Session updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudySession"
+
+  /sessions/{id}/feedback:
+    post:
+      operationId: submitFeedback
+      tags: [sessions]
+      summary: Submit feedback after a session
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackRequest"
+      responses:
+        "201":
+          description: Feedback submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feedback"
+
+  /groups:
+    get:
+      operationId: listGroups
+      tags: [groups]
+      summary: List all study groups
+      parameters:
+        - name: subject
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Groups list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudyGroup"
+    post:
+      operationId: createGroup
+      tags: [groups]
+      summary: Create a study group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGroupRequest"
+      responses:
+        "201":
+          description: Group created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudyGroup"
+
+  /groups/{id}/join:
+    post:
+      operationId: joinGroup
+      tags: [groups]
+      summary: Join a study group
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Joined successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudyGroup"
+        "404":
+          description: Group not found
+
+  /stats/summary:
+    get:
+      operationId: getStatsSummary
+      tags: [users]
+      summary: Get user study stats summary
+      responses:
+        "200":
+          description: Stats summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsSummary"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +315,312 @@ components:
       required:
         - status
 
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+        avatar:
+          type: ["string", "null"]
+      required:
+        - email
+        - name
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: ["integer", "null"]
+        occupation:
+          type: ["string", "null"]
+        about:
+          type: ["string", "null"]
+        avatar:
+          type: ["string", "null"]
+        interests:
+          type: array
+          items:
+            type: string
+        skills:
+          type: array
+          items:
+            type: string
+        preferredGroupSize:
+          type: string
+          enum: [one_on_one, small_group, large_group]
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        age:
+          type: ["integer", "null"]
+        occupation:
+          type: ["string", "null"]
+        about:
+          type: ["string", "null"]
+        avatar:
+          type: ["string", "null"]
+        interests:
+          type: array
+          items:
+            type: string
+        skills:
+          type: array
+          items:
+            type: string
+        preferredGroupSize:
+          type: string
+        totalSessions:
+          type: integer
+        totalHours:
+          type: number
+        rating:
+          type: number
+        createdAt:
+          type: string
+      required:
+        - id
+        - email
+        - name
+        - interests
+        - skills
+        - preferredGroupSize
+        - totalSessions
+        - totalHours
+        - rating
+        - createdAt
+
+    BroadcastRequest:
+      type: object
+      properties:
+        subject:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        groupSize:
+          type: string
+          enum: [two_to_five, five_to_ten]
+        durationMinutes:
+          type: integer
+      required:
+        - subject
+        - latitude
+        - longitude
+        - groupSize
+        - durationMinutes
+
+    NearbyStudent:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        avatar:
+          type: ["string", "null"]
+        subject:
+          type: string
+        distanceKm:
+          type: number
+        groupSize:
+          type: string
+        interests:
+          type: array
+          items:
+            type: string
+        rating:
+          type: number
+        latitude:
+          type: number
+        longitude:
+          type: number
+      required:
+        - id
+        - name
+        - subject
+        - distanceKm
+        - groupSize
+        - interests
+        - rating
+        - latitude
+        - longitude
+
+    MatchResults:
+      type: object
+      properties:
+        broadcastId:
+          type: integer
+        matches:
+          type: array
+          items:
+            $ref: "#/components/schemas/NearbyStudent"
+      required:
+        - broadcastId
+        - matches
+
+    StudySession:
+      type: object
+      properties:
+        id:
+          type: integer
+        subject:
+          type: string
+        hostUserId:
+          type: integer
+        partnerUserId:
+          type: ["integer", "null"]
+        status:
+          type: string
+          enum: [pending, active, completed, cancelled]
+        startedAt:
+          type: ["string", "null"]
+        endedAt:
+          type: ["string", "null"]
+        durationMinutes:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - subject
+        - hostUserId
+        - status
+        - createdAt
+
+    CreateSessionRequest:
+      type: object
+      properties:
+        subject:
+          type: string
+        partnerUserId:
+          type: ["integer", "null"]
+        plannedDurationMinutes:
+          type: integer
+      required:
+        - subject
+        - plannedDurationMinutes
+
+    UpdateSessionRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [active, completed, cancelled]
+        durationMinutes:
+          type: ["integer", "null"]
+
+    FeedbackRequest:
+      type: object
+      properties:
+        rating:
+          type: integer
+        comment:
+          type: ["string", "null"]
+        reviewedUserId:
+          type: integer
+      required:
+        - rating
+        - reviewedUserId
+
+    Feedback:
+      type: object
+      properties:
+        id:
+          type: integer
+        sessionId:
+          type: integer
+        reviewerUserId:
+          type: integer
+        reviewedUserId:
+          type: integer
+        rating:
+          type: integer
+        comment:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - sessionId
+        - reviewerUserId
+        - reviewedUserId
+        - rating
+        - createdAt
+
+    StudyGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        subject:
+          type: string
+        description:
+          type: ["string", "null"]
+        maxMembers:
+          type: integer
+        currentMembers:
+          type: integer
+        createdByUserId:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - subject
+        - maxMembers
+        - currentMembers
+        - createdByUserId
+        - createdAt
+
+    CreateGroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        subject:
+          type: string
+        description:
+          type: ["string", "null"]
+        maxMembers:
+          type: integer
+      required:
+        - name
+        - subject
+        - maxMembers
+
+    StatsSummary:
+      type: object
+      properties:
+        totalSessions:
+          type: integer
+        totalHoursStudied:
+          type: number
+        averageRating:
+          type: number
+        topSubject:
+          type: ["string", "null"]
+        completedThisWeek:
+          type: integer
+        activeGroups:
+          type: integer
+      required:
+        - totalSessions
+        - totalHoursStudied
+        - averageRating
+        - completedThisWeek
+        - activeGroups

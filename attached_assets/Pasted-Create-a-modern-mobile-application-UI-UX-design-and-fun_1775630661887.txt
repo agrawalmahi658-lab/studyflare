@@ -1,0 +1,153 @@
+Create a modern mobile application UI/UX design and functional prototype for a study partner matching platform.
+
+APP NAME: (You can suggest something like “StudySync” or “FindMyStudyBuddy”)
+
+CORE PROBLEM:
+Students find it difficult and inefficient to instantly find study partners nearby with similar interests and availability.
+
+GOAL:
+Design an app that allows users to instantly connect with nearby study partners using location, interests, and group size preferences.
+
+-----------------------------------
+
+🔐 AUTHENTICATION FLOW:
+- First screen should be Login / Signup
+- Options:
+  - Email + Password
+  - Phone OTP
+  - Google Sign-In (optional)
+- After login, first-time users must:
+  - Select interests (Maths, Physics, Chemistry, Coding, etc.)
+  - Choose study preference (1:1 or group)
+
+-----------------------------------
+
+🏠 HOME SCREEN (MAIN SCREEN):
+- Clean modern UI with minimal design
+- At top:
+  - Filter button (left)
+  - Sort By dropdown (right)
+
+FILTER OPTIONS:
+- Subjects (Maths, Physics, Chemistry, etc.)
+
+SORT BY (IMPORTANT CHANGE):
+- Label: “Sort by” (light font style)
+- Option: “Members”
+  - On clicking:
+    - Show dropdown:
+      - 2–5 Members
+      - 5–10 Members
+
+CENTER UI:
+- Large, visually attractive button:
+  👉 “TAP TO STUDY”
+- Subtext:
+  “Match with students having similar interests”
+
+BOTTOM NAVIGATION BAR:
+- Home icon
+- Group icon
+- Future feature icon (🎓 hat symbol)
+- Profile icon
+
+-----------------------------------
+
+📡 MATCHING SYSTEM (AFTER TAP TO STUDY):
+- When user taps "Tap to Study":
+  - App activates location (GPS-based matching)
+  - Finds nearby users based on:
+    - Interests
+    - Availability
+    - Selected group size (members filter)
+
+UI ANIMATION:
+- Radar / ripple animation
+- User is at center
+- Nearby users appear as glowing dots around
+- Smooth animated scanning effect
+
+OUTPUT:
+- Show matched users/groups
+- Option to:
+  - Connect
+  - Start study session
+
+-----------------------------------
+
+📚 STUDY SESSION SCREEN:
+- Minimal interface
+- Features:
+  - Chat or voice (optional)
+  - Study timer (Pomodoro style optional)
+
+-----------------------------------
+
+⭐ FEEDBACK SCREEN (AFTER SESSION):
+- Show rating system:
+  - 1–5 stars
+- Buttons:
+  - Repeat Session
+  - Review Partner
+
+-----------------------------------
+
+👤 PROFILE SCREEN:
+- Profile picture (editable)
+- Fields:
+  - Name
+  - Age
+  - Occupation
+- Sections:
+  - About
+  - Interests
+  - Skills
+
+OPTIONS:
+- Theme toggle (light/dark)
+- Preferences (checkboxes)
+- Logout
+
+-----------------------------------
+
+👥 GROUP STUDY FEATURE:
+- Section for:
+  - Join Group
+  - Create Group
+  - Invite Friends
+
+-----------------------------------
+
+🎓 FUTURE FEATURE TAB (HAT ICON):
+- Show “Under Development”
+- Placeholder features:
+  - AI Study Assistant
+  - Smart scheduling
+  - Study analytics
+
+-----------------------------------
+
+🎨 DESIGN STYLE:
+- Clean, modern UI
+- Soft gradients or minimal color palette
+- Rounded buttons and cards
+- Smooth animations (especially radar)
+- Student-friendly and engaging
+
+-----------------------------------
+
+⚙️ TECH SUGGESTIONS:
+- Frontend: Flutter or React Native
+- Backend: Firebase (Auth + Realtime DB)
+- Location: GPS API
+- Real-time matching simulation allowed for prototype
+
+-----------------------------------
+
+🎯 IMPORTANT:
+- Focus on smooth UX and visual appeal
+- Radar animation is key highlight
+- Matching logic can be simulated if needed
+- Keep it hackathon-friendly (fast to build)
+
+-----------------------------------

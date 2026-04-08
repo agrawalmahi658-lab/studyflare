@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "StudyFlare - One-Tap Study Group"
+version = "1.0.0"
+id = "artifacts/studyflare"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25529
+
+[services.development]
+run = "pnpm --filter @workspace/studyflare run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/studyflare", "run", "build" ]
+publicDir = "artifacts/studyflare/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25529"
+BASE_PATH = "/"
