@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { gt } from "drizzle-orm";
+import { gt, eq } from "drizzle-orm";
 import { db, broadcastsTable, usersTable } from "@workspace/db";
 import {
   BroadcastAvailabilityBody,

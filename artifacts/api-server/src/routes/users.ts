@@ -9,6 +9,7 @@ import {
   UpdateProfileResponse,
   GetStatsSummaryResponse,
 } from "@workspace/api-zod";
+import { serializeDates } from "../lib/serialize";
 
 const router: IRouter = Router();
 
@@ -24,8 +25,7 @@ router.post("/users/login", async (req, res): Promise<void> => {
   const existing = await db.select().from(usersTable).where(eq(usersTable.email, email));
 
   if (existing.length > 0) {
-    const user = existing[0];
-    res.json(LoginUserResponse.parse(user));
+    res.json(LoginUserResponse.parse(serializeDates(existing[0])));
     return;
   }
 
@@ -34,7 +34,7 @@ router.post("/users/login", async (req, res): Promise<void> => {
     .values({ email, name, avatar: avatar ?? null, interests: [], skills: [], preferredGroupSize: "one_on_one" })
     .returning();
 
-  res.json(LoginUserResponse.parse(user));
+  res.json(LoginUserResponse.parse(serializeDates(user)));
 });
 
 router.get("/users/profile", async (req, res): Promise<void> => {
@@ -47,7 +47,7 @@ router.get("/users/profile", async (req, res): Promise<void> => {
     return;
   }
 
-  res.json(GetProfileResponse.parse(user));
+  res.json(GetProfileResponse.parse(serializeDates(user)));
 });
 
 router.patch("/users/profile", async (req, res): Promise<void> => {
@@ -70,7 +70,7 @@ router.patch("/users/profile", async (req, res): Promise<void> => {
     return;
   }
 
-  res.json(UpdateProfileResponse.parse(user));
+  res.json(UpdateProfileResponse.parse(serializeDates(user)));
 });
 
 router.get("/stats/summary", async (req, res): Promise<void> => {

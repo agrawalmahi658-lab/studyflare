@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db, studySessionsTable, feedbackTable, usersTable } from "@workspace/db";
 import {
   CreateSessionBody,
@@ -12,6 +12,7 @@ import {
   SubmitFeedbackParams,
   SubmitFeedbackBody,
 } from "@workspace/api-zod";
+import { serializeDates } from "../lib/serialize";
 
 const router: IRouter = Router();
 
@@ -24,7 +25,7 @@ router.get("/sessions", async (req, res): Promise<void> => {
     .where(eq(studySessionsTable.hostUserId, userId))
     .orderBy(studySessionsTable.createdAt);
 
-  res.json(ListSessionsResponse.parse(sessions));
+  res.json(ListSessionsResponse.parse(serializeDates(sessions)));
 });
 
 router.post("/sessions", async (req, res): Promise<void> => {
@@ -46,7 +47,7 @@ router.post("/sessions", async (req, res): Promise<void> => {
     })
     .returning();
 
-  res.status(201).json(GetSessionResponse.parse(session));
+  res.status(201).json(GetSessionResponse.parse(serializeDates(session)));
 });
 
 router.get("/sessions/:id", async (req, res): Promise<void> => {
@@ -67,7 +68,7 @@ router.get("/sessions/:id", async (req, res): Promise<void> => {
     return;
   }
 
-  res.json(GetSessionResponse.parse(session));
+  res.json(GetSessionResponse.parse(serializeDates(session)));
 });
 
 router.patch("/sessions/:id", async (req, res): Promise<void> => {
@@ -122,7 +123,7 @@ router.patch("/sessions/:id", async (req, res): Promise<void> => {
     }
   }
 
-  res.json(UpdateSessionResponse.parse(session));
+  res.json(UpdateSessionResponse.parse(serializeDates(session)));
 });
 
 router.post("/sessions/:id/feedback", async (req, res): Promise<void> => {
@@ -164,7 +165,7 @@ router.post("/sessions/:id/feedback", async (req, res): Promise<void> => {
       .where(eq(usersTable.id, parsed.data.reviewedUserId));
   }
 
-  res.status(201).json(feedback);
+  res.status(201).json(serializeDates(feedback));
 });
 
 export default router;

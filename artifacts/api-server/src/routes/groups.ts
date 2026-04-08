@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db, studyGroupsTable, groupMembersTable } from "@workspace/db";
 import {
   ListGroupsQueryParams,
@@ -8,6 +8,7 @@ import {
   JoinGroupParams,
   JoinGroupResponse,
 } from "@workspace/api-zod";
+import { serializeDates } from "../lib/serialize";
 
 const router: IRouter = Router();
 
@@ -25,7 +26,7 @@ router.get("/groups", async (req, res): Promise<void> => {
     groups = await db.select().from(studyGroupsTable);
   }
 
-  res.json(ListGroupsResponse.parse(groups));
+  res.json(ListGroupsResponse.parse(serializeDates(groups)));
 });
 
 router.post("/groups", async (req, res): Promise<void> => {
@@ -51,7 +52,7 @@ router.post("/groups", async (req, res): Promise<void> => {
 
   await db.insert(groupMembersTable).values({ groupId: group.id, userId });
 
-  res.status(201).json(group);
+  res.status(201).json(serializeDates(group));
 });
 
 router.post("/groups/:id/join", async (req, res): Promise<void> => {
@@ -84,7 +85,7 @@ router.post("/groups/:id/join", async (req, res): Promise<void> => {
     .where(eq(studyGroupsTable.id, group.id))
     .returning();
 
-  res.json(JoinGroupResponse.parse(updated));
+  res.json(JoinGroupResponse.parse(serializeDates(updated)));
 });
 
 export default router;
