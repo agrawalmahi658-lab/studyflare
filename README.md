@@ -128,12 +128,13 @@ This enables users to instantly form study sessions with relevant peers using a 
 
 * Developed using **Replit**
 * Built with Flutter / React for cross-platform UI
+* Java
 
 ---
 
 ### ⚙️ Backend
 
-* Powered by **Firebase**
+* Powered by **Node.js**
 
   * Authentication
   * Realtime Database / Firestore
