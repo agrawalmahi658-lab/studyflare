@@ -23,6 +23,15 @@ function distanceKm(lat1: number, lon1: number, lat2: number, lon2: number): num
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+const INDIAN_MOCK_STUDENTS = [
+  { id: 99, name: "Arjun Sharma", avatar: null, distanceKm: 0.3, interests: ["Maths", "Coding"], rating: 4.8 },
+  { id: 98, name: "Priya Patel", avatar: null, distanceKm: 0.7, interests: ["Physics", "Chemistry"], rating: 4.9 },
+  { id: 97, name: "Riya Nair", avatar: null, distanceKm: 1.1, interests: ["Biology", "Chemistry"], rating: 4.6 },
+  { id: 96, name: "Karan Mehta", avatar: null, distanceKm: 1.5, interests: ["Coding", "Economics"], rating: 4.7 },
+  { id: 95, name: "Ananya Iyer", avatar: null, distanceKm: 1.9, interests: ["Literature", "History"], rating: 4.5 },
+  { id: 94, name: "Vikram Rao", avatar: null, distanceKm: 2.2, interests: ["Maths", "Physics"], rating: 4.8 },
+];
+
 router.post("/matching/broadcast", async (req, res): Promise<void> => {
   const userId = parseInt(req.headers["x-user-id"] as string || "1", 10);
 
@@ -71,11 +80,13 @@ router.post("/matching/broadcast", async (req, res): Promise<void> => {
   }
 
   if (nearby.length === 0) {
-    const mockStudents = [
-      { id: 99, name: "Alex K.", avatar: null, subject, distanceKm: 0.3, groupSize, interests: ["Coding", "Maths"], rating: 4.7, latitude: latitude + 0.001, longitude: longitude + 0.001 },
-      { id: 98, name: "Priya S.", avatar: null, subject, distanceKm: 0.8, groupSize, interests: ["Physics", subject], rating: 4.9, latitude: latitude - 0.002, longitude: longitude + 0.003 },
-      { id: 97, name: "Jamie L.", avatar: null, subject, distanceKm: 1.2, groupSize, interests: [subject, "Biology"], rating: 4.5, latitude: latitude + 0.003, longitude: longitude - 0.001 },
-    ];
+    const mockStudents = INDIAN_MOCK_STUDENTS.slice(0, 4).map((s, i) => ({
+      ...s,
+      subject,
+      groupSize,
+      latitude: latitude + (0.001 * (i + 1)),
+      longitude: longitude + (0.002 * (i + 1)),
+    }));
     res.json(BroadcastAvailabilityResponse.parse({ broadcastId: broadcast.id, matches: mockStudents }));
     return;
   }
@@ -90,12 +101,15 @@ router.get("/matching/nearby", async (req, res): Promise<void> => {
     return;
   }
 
-  const mockStudents = [
-    { id: 99, name: "Alex K.", avatar: null, subject: params.data.subject ?? "Maths", distanceKm: 0.3, groupSize: "two_to_five", interests: ["Coding", "Maths"], rating: 4.7, latitude: 50.001, longitude: 8.001 },
-    { id: 98, name: "Priya S.", avatar: null, subject: params.data.subject ?? "Physics", distanceKm: 0.8, groupSize: "two_to_five", interests: ["Physics", "Chemistry"], rating: 4.9, latitude: 49.998, longitude: 8.003 },
-    { id: 97, name: "Jamie L.", avatar: null, subject: params.data.subject ?? "Coding", distanceKm: 1.2, groupSize: "five_to_ten", interests: ["Coding", "Biology"], rating: 4.5, latitude: 50.003, longitude: 7.999 },
-    { id: 96, name: "Sam R.", avatar: null, subject: params.data.subject ?? "Chemistry", distanceKm: 1.9, groupSize: "two_to_five", interests: ["Chemistry", "Maths"], rating: 4.6, latitude: 50.005, longitude: 8.005 },
-  ];
+  const subject = params.data.subject ?? "General";
+
+  const mockStudents = INDIAN_MOCK_STUDENTS.map((s) => ({
+    ...s,
+    subject,
+    groupSize: "two_to_five",
+    latitude: 28.6 + Math.random() * 0.05,
+    longitude: 77.2 + Math.random() * 0.05,
+  }));
 
   res.json(GetNearbyStudentsResponse.parse(mockStudents));
 });
